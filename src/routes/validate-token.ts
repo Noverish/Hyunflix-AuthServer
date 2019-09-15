@@ -5,9 +5,41 @@ import * as jwt from '@src/utils/jwt';
 
 const router: Router = Router();
 
+export async function validateToken(token: string) {
+  const session: Session | null = await Session.findByToken(token);
+      
+  if(!session) {
+    return null;
+  }
+  
+  try {
+    const decoded = jwt.verify(token);
+    const userId: number = decoded.userId;
+  
+    if(userId === 1) {
+      return {
+        userId,
+        authorizations: ['/'],
+      }
+    } else {
+      return {
+        userId,
+        authorizations: [
+          '/Movies',
+          '/torrents',
+          '/TV_Programs',
+          '/Musics',
+        ],
+      }
+    }
+  } catch (err) {
+    return null;
+  }
+}
+
 router.get('/', (req: Request, res: Response, next: NextFunction) => {
   (async function() {
-    let token = ''
+    let token = '';
   
     if (req.cookies['x-hyunsub-token']) {
       token = req.cookies['x-hyunsub-token'];
@@ -23,39 +55,16 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
       return;
     }
     
-    try {
-      const session: Session | null = await Session.findByToken(token);
-      
-      if(!session) {
-        res.status(401);
-        res.end();
-        return;
-      }
-      
-      const decoded = jwt.verify(token);
-      const userId = decoded.userId;
-      
-      if(userId === 1) {
-        res.status(204);
-        res.set({
-          'x-hyunsub-userId': userId,
-          'x-hyunsub-authorizations': ['/'],
-        });
-        res.end();
-      } else {
-        res.status(204);
-        res.set({
-          'x-hyunsub-userId': userId,
-          'x-hyunsub-authorizations': [
-            '/Movies',
-            '/torrents',
-            '/TV_Programs',
-            '/Musics',
-          ],
-        });
-        res.end();
-      }
-    } catch (msg) {
+    const result = await validateToken(token);
+    
+    if (result) {
+      res.status(204);
+      res.set({
+        'x-hyunsub-userId': result.userId,
+        'x-hyunsub-authorizations': result.authorizations,
+      });
+      res.end();
+    } else {
       res.status(401);
       res.end();
     }

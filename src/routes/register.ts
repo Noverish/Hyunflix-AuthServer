@@ -19,7 +19,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
   const regCodeStr = rsa.decrypt(regCodeCipher, rsaKeyPair.privateKey);
 
   (async function () {
-    const regCode: RegCode | null = await RegCode.getRegCode(regCodeStr);
+    const regCode: RegCode | null = await RegCode.findByCode(regCodeStr);
 
     if (!regCode) {
       res.status(400);
@@ -27,7 +27,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
       return;
     }
 
-    if (await User.findByUserId(regCode.userId)) {
+    if (regCode.userId) {
       res.status(400);
       res.json({ msg: '이미 사용된 회원가입 코드입니다' });
       return;
@@ -40,11 +40,10 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
     }
 
     const hash: string = await bcrypt.hash(password, 10);
-
-    const user: User = await User.insert(regCode.userId, username, hash);
+    const user: User = await User.insert(username, hash);
+    await RegCode.updateUserId(regCode.codeId, user.userId);
 
     const token: string = jwt.create({ userId: user.userId });
-
     await Session.insert(user.userId, token, userAgent);
 
     res.json({ token });

@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, getConnection } from 'typeorm';
 
-@Entity({ name: 'users' })
+@Entity({ name: 'User' })
 export class User {
   @PrimaryGeneratedColumn({ name: 'user_id' })
   userId: number;
@@ -30,18 +30,16 @@ export class User {
       .getOne();
   }
 
-  static async insert(userId: number, username: string, password: string): Promise<User> {
-    await getConnection()
+  static async insert(username: string, password: string): Promise<User> {
+    const result = await getConnection()
       .createQueryBuilder()
       .insert()
       .into(User)
-      .values({ userId, username, password, date: new Date() })
+      .values({ username, password, date: new Date() })
       .execute();
-
-    return await getConnection()
-      .getRepository(User)
-      .createQueryBuilder()
-      .where('user_id = :userId', { userId })
-      .getOne();
+    
+    const insertedId = result.identifiers[0].userId;
+    
+    return await User.findByUserId(insertedId);
   }
 }
