@@ -35,7 +35,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
     
     await Session.insert(user.userId, token, userAgent);
 
-    res.json({ token });
+    res.json({ token, userId: user.userId });
   })().catch(err => next(err));
 });
 
