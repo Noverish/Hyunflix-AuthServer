@@ -21,12 +21,14 @@ export async function validateToken(token: string) {
     if (!user) {
       return null;
     }
+    
+    const authority: string[] = user.authority.split(',');
   
-    if(userId === 1) {
+    if(authority.includes('admin')) {
       return {
         userId,
         authorizations: ['/'],
-        authority: user.authority.split(','),
+        authority,
       }
     } else {
       return {
@@ -37,7 +39,7 @@ export async function validateToken(token: string) {
           '/TV_Programs',
           '/Musics',
         ],
-        authority: user.authority.split(','),
+        authority,
       }
     }
   } catch (err) {
