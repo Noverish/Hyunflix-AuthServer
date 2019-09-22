@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 
-import { Session } from '@src/entity';
+import { Session, User } from '@src/entity';
 import * as jwt from '@src/utils/jwt';
 
 const router: Router = Router();
@@ -15,11 +15,18 @@ export async function validateToken(token: string) {
   try {
     const decoded = jwt.verify(token);
     const userId: number = decoded.userId;
+    
+    const user: User | null = await User.findByUserId(userId);
+  
+    if (!user) {
+      return null;
+    }
   
     if(userId === 1) {
       return {
         userId,
         authorizations: ['/'],
+        authority: user.authority.split(','),
       }
     } else {
       return {
@@ -30,6 +37,7 @@ export async function validateToken(token: string) {
           '/TV_Programs',
           '/Musics',
         ],
+        authority: user.authority.split(','),
       }
     }
   } catch (err) {
@@ -62,6 +70,7 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
       res.set({
         'x-hyunsub-userId': result.userId,
         'x-hyunsub-authorizations': result.authorizations,
+        'x-hyunsub-authority': result.authority,
       });
       res.end();
     } else {

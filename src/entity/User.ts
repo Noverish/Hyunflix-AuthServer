@@ -12,6 +12,9 @@ export class User {
   password: string;
 
   @Column()
+  authority: string;
+
+  @Column()
   date: Date;
 
   static async findByUsername(username: string): Promise<User | null> {
@@ -35,7 +38,7 @@ export class User {
       .createQueryBuilder()
       .insert()
       .into(User)
-      .values({ username, password, date: new Date() })
+      .values({ username, password, authority: '', date: new Date() })
       .execute();
     
     const insertedId = result.identifiers[0].userId;
