@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import * as bcrypt from 'bcryptjs';
 
-import { User, RegCode, Session } from '@src/entity';
+import { User, RegisterCode, Session } from '@src/entity';
 import * as rsa from '@src/utils/rsa';
 import * as jwt from '@src/utils/jwt';
 import { rsaKeyPair } from '@src/app';
@@ -19,7 +19,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
   const regCodeStr = rsa.decrypt(regCodeCipher, rsaKeyPair.privateKey);
 
   (async function () {
-    const regCode: RegCode | null = await RegCode.findByCode(regCodeStr);
+    const regCode: RegisterCode | null = await RegisterCode.findByCode(regCodeStr);
 
     if (!regCode) {
       res.status(400);
@@ -27,7 +27,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
       return;
     }
 
-    if (regCode.userId) {
+    if (regCode.user) {
       res.status(400);
       res.json({ msg: '이미 사용된 회원가입 코드입니다' });
       return;
@@ -40,13 +40,15 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
     }
 
     const hash: string = await bcrypt.hash(password, 10);
-    const user: User = await User.insert(username, hash);
-    await RegCode.updateUserId(regCode.codeId, user.userId);
+    const userId: number = await User.insert(username, hash);
+    const user: User = await User.findById(userId);
+    await RegisterCode.updateUser(regCode.codeId, user);
 
     const token: string = jwt.create({ userId: user.userId });
-    await Session.insert(user.userId, token, userAgent);
+    await Session.deleteByUser(user);
+    await Session.insert(user, token, userAgent);
 
-    res.json({ token, userId: user.userId, authority: user.authority.split(',') });
+    res.json(user.convert(token));
   })().catch(err => next(err));
 });
 

@@ -1,8 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, getConnection } from 'typeorm';
 
-@Entity({ name: 'User' })
+import { IUser } from '@src/models';
+
+@Entity()
 export class User {
-  @PrimaryGeneratedColumn({ name: 'user_id' })
+  @PrimaryGeneratedColumn()
   userId: number;
 
   @Column()
@@ -25,15 +27,15 @@ export class User {
       .getOne();
   }
 
-  static async findByUserId(user_id: number): Promise<User | null> {
+  static async findById(userId: number): Promise<User | null> {
     return await getConnection()
       .getRepository(User)
       .createQueryBuilder()
-      .where('user_id = :user_id', { user_id })
+      .where('userId = :userId', { userId })
       .getOne();
   }
 
-  static async insert(username: string, password: string): Promise<User> {
+  static async insert(username: string, password: string): Promise<number> {
     const result = await getConnection()
       .createQueryBuilder()
       .insert()
@@ -41,8 +43,14 @@ export class User {
       .values({ username, password, authority: '', date: new Date() })
       .execute();
     
-    const insertedId = result.identifiers[0].userId;
-    
-    return await User.findByUserId(insertedId);
+    return result.identifiers[0].userId;
+  }
+  
+  convert(token: string): IUser {
+    return {
+      token,
+      userId: this.userId,
+      authority: this.authority.split(','),
+    }
   }
 }

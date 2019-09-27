@@ -1,17 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
 
-import { RegCode } from '@src/entity';
+import { RegisterCode } from '@src/entity';
 import { validateToken } from './validate-token';
 import { dateToString } from '@src/utils/date';
 
 const router: Router = Router();
 
-function process(regCode: RegCode) {
-  return {
-    ...regCode,
-    date: dateToString(regCode.date),
-  }
-}
 
 router.post('/', (req: Request, res: Response, next: NextFunction) => {
   const code = req.body['code'];
@@ -25,7 +19,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
       res.end();
     }
     
-    const regCode: RegCode | null = await RegCode.findByCode(code);
+    const regCode: RegisterCode | null = await RegisterCode.findByCode(code);
 
     if (regCode) {
       res.status(409);
@@ -33,10 +27,11 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
       return;
     }
 
-    const inserted: RegCode = await RegCode.insert(code, realname);
+    const codeId: number = await RegisterCode.insert(code, realname);
+    const inserted: RegisterCode = await RegisterCode.findById(codeId);
     
     res.status(200);
-    res.json(process(inserted));
+    res.json(inserted.convert());
   })().catch(err => next(err));
 });
 
@@ -49,10 +44,10 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
       res.end();
     }
     
-    const regCodes: RegCode[] = await RegCode.findAll();
+    const regCodes: RegisterCode[] = await RegisterCode.findAll();
     
     res.status(200);
-    res.json(regCodes.map(c => process(c)));
+    res.json(regCodes.map(c => c.convert()));
   })().catch(err => next(err));
 })
 

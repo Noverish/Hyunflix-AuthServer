@@ -1,3 +1,3 @@
 export { User } from './User';
-export { RegCode } from './RegCode';
+export { RegisterCode } from './RegisterCode';
 export { Session } from './Session';

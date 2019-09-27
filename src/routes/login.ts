@@ -33,9 +33,10 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
 
     const token = jwt.create({ userId: user.userId });
     
-    await Session.insert(user.userId, token, userAgent);
+    await Session.deleteByUser(user);
+    await Session.insert(user, token, userAgent);
 
-    res.json({ token, userId: user.userId, authority: user.authority.split(',') });
+    res.json(user.convert(token));
   })().catch(err => next(err));
 });
 

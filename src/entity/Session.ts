@@ -1,46 +1,60 @@
-import { Entity, PrimaryColumn, Column, getConnection } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, getConnection } from 'typeorm';
 
-@Entity({ name: 'Session' })
+import { User } from '@src/entity';
+
+@Entity()
 export class Session {
-  @PrimaryColumn({ name: 'user_id' })
-  userId: number;
+  @PrimaryGeneratedColumn()
+  sessionId: number;
+  
+  @OneToOne(type => User)
+  @JoinColumn()
+  user: User;
 
-  @Column()
+  @Column({ length: 1024 })
   token: string;
 
-  @Column({ name: 'user_agent' })
+  @Column({ length: 1024 })
   userAgent: string;
   
   @Column()
   date: Date;
 
+  static async findByUser(user: User): Promise<Session | null> {
+    return await getConnection()
+      .getRepository(Session)
+      .createQueryBuilder()
+      .leftJoinAndSelect("Session.user", "user")
+      .where('Session.user = :userId', { userId: user.userId })
+      .getOne();
+  }
+
   static async findByToken(token: string): Promise<Session | null> {
     return await getConnection()
       .getRepository(Session)
       .createQueryBuilder()
+      .leftJoinAndSelect("Session.user", "user")
       .where('token = :token', { token })
       .getOne();
   }
-
-  static async insert(userId: number, token: string, userAgent: string): Promise<Session> {
+  
+  static async deleteByUser(user: User): Promise<void> {
     await getConnection()
       .createQueryBuilder()
       .delete()
       .from(Session)
-      .where('user_id = :userId', { userId })
+      .where('userUserId = :userId', { userId: user.userId })
       .execute();
-    
-    await getConnection()
+  }
+
+  static async insert(user: User, token: string, userAgent: string): Promise<number> {
+    const result = await getConnection()
       .createQueryBuilder()
       .insert()
       .into(Session)
-      .values({ userId, token, userAgent, date: new Date() })
+      .values({ user, token, userAgent, date: new Date() })
       .execute();
-
-    return await getConnection()
-      .getRepository(Session)
-      .createQueryBuilder()
-      .where('user_id = :userId', { userId })
-      .getOne();
+    
+    return result.identifiers[0].sessionId;
   }
 }

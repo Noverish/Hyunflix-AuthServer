@@ -16,7 +16,7 @@ export async function validateToken(token: string) {
     const decoded = jwt.verify(token);
     const userId: number = decoded.userId;
     
-    const user: User | null = await User.findByUserId(userId);
+    const user: User | null = await User.findById(userId);
   
     if (!user) {
       return null;
