@@ -8,7 +8,7 @@ import { dateToString } from '@src/utils/date';
 export class RegisterCode {
   @PrimaryGeneratedColumn()
   codeId: number;
-  
+
   @OneToOne(type => User)
   @JoinColumn()
   user: User;
@@ -26,15 +26,15 @@ export class RegisterCode {
     return await getConnection()
       .getRepository(RegisterCode)
       .createQueryBuilder()
-      .leftJoinAndSelect("RegisterCode.user", "user")
+      .leftJoinAndSelect('RegisterCode.user', 'user')
       .getMany();
   }
-  
+
   static async findById(codeId: number): Promise<RegisterCode | null> {
     return await getConnection()
       .getRepository(RegisterCode)
       .createQueryBuilder()
-      .leftJoinAndSelect("RegisterCode.user", "user")
+      .leftJoinAndSelect('RegisterCode.user', 'user')
       .where('codeId = :codeId', { codeId })
       .getOne();
   }
@@ -43,7 +43,7 @@ export class RegisterCode {
     return await getConnection()
       .getRepository(RegisterCode)
       .createQueryBuilder()
-      .leftJoinAndSelect("RegisterCode.user", "user")
+      .leftJoinAndSelect('RegisterCode.user', 'user')
       .where('code = :code', { code })
       .getOne();
   }
@@ -55,10 +55,10 @@ export class RegisterCode {
       .into(RegisterCode)
       .values({ code, realname, date: new Date() })
       .execute();
-    
+
     return result.identifiers[0].codeId;
   }
-  
+
   static async updateUser(codeId: number, user: User): Promise<void> {
     await getConnection()
       .createQueryBuilder()
@@ -67,7 +67,7 @@ export class RegisterCode {
       .where('codeId = :codeId', { codeId })
       .execute();
   }
-  
+
   convert(): IRegisterCode {
     return {
       codeId: this.codeId,
@@ -75,6 +75,6 @@ export class RegisterCode {
       realname: this.realname,
       code: this.code,
       date: dateToString(this.date),
-    }
+    };
   }
 }

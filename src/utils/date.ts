@@ -1,22 +1,21 @@
 export function dateToString(date: Date) {
-  const s =
-    leadingZeros(date.getFullYear(), 4) + '-' +
-    leadingZeros(date.getMonth() + 1, 2) + '-' +
-    leadingZeros(date.getDate(), 2) + ' ' +
+  const year = leadingZeros(date.getFullYear(), 4);
+  const month = leadingZeros(date.getMonth() + 1, 2);
+  const d = leadingZeros(date.getDate(), 2);
+  const hour = leadingZeros(date.getHours(), 2);
+  const minute = leadingZeros(date.getMinutes(), 2);
+  const second = leadingZeros(date.getSeconds(), 2);
 
-    leadingZeros(date.getHours(), 2) + ':' +
-    leadingZeros(date.getMinutes(), 2) + ':' +
-    leadingZeros(date.getSeconds(), 2);
-
-  return s;
+  return `${year}-${month}-${d} ${hour}:${minute}:${second}`;
 }
 
-function leadingZeros(n, digits) {
+function leadingZeros(num: number, digits: number) {
   let zero = '';
-  n = n.toString();
+  const n = num.toString();
   if (n.length < digits) {
-    for (let i = 0; i < digits - n.length; i++)
+    for (let i = 0; i < digits - n.length; i += 1) {
       zero += '0';
+    }
   }
   return zero + n;
 }

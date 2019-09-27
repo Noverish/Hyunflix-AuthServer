@@ -13,7 +13,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
   const regCodeCipher: string = req.body['reg_code'];
   const usernameCipher: string = req.body['username'];
   const passwordCipher: string = req.body['password'];
-  
+
   const username = rsa.decrypt(usernameCipher, rsaKeyPair.privateKey);
   const password = rsa.decrypt(passwordCipher, rsaKeyPair.privateKey);
   const regCodeStr = rsa.decrypt(regCodeCipher, rsaKeyPair.privateKey);

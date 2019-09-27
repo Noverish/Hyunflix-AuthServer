@@ -5,8 +5,8 @@ export function create(obj: object) {
   const payload = {
     ...obj,
     date: new Date().toISOString(),
-  }
-  
+  };
+
   return jwt.sign(payload, jwtSecret);
 }
 

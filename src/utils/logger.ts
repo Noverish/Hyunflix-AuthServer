@@ -3,11 +3,11 @@ import * as moment from 'moment';
 
 morgan.token('remote-addr', (req, res) => {
   const ip = req.ip || req._remoteAddress || (req.connection && req.connection.remoteAddress) || undefined;
-  if(ip && typeof ip === 'string' && ip.split(':').length === 4) {
+  if (ip && typeof ip === 'string' && ip.split(':').length === 4) {
     return ip.split(':')[3];
-  } else {
-    return ip;
   }
+
+  return ip;
 });
 
 morgan.token('date', (req, res) => {

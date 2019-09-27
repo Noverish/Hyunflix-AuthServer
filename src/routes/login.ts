@@ -16,7 +16,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
   (async function () {
     const username = rsa.decrypt(usernameCipher, rsaKeyPair.privateKey);
     const password = rsa.decrypt(passwordCipher, rsaKeyPair.privateKey);
-  
+
     const user: User | null = await User.findByUsername(username);
 
     if (!user) {
@@ -32,7 +32,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
     }
 
     const token = jwt.create({ userId: user.userId });
-    
+
     await Session.deleteByUser(user);
     await Session.insert(user, token, userAgent);
 

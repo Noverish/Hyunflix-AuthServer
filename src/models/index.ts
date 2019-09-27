@@ -13,5 +13,5 @@ export interface IRegisterCode {
 }
 
 export interface ISession {
-  
+
 }

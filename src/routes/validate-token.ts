@@ -7,66 +7,66 @@ const router: Router = Router();
 
 export async function validateToken(token: string) {
   const session: Session | null = await Session.findByToken(token);
-      
-  if(!session) {
+
+  if (!session) {
     return null;
   }
-  
+
   try {
     const decoded = jwt.verify(token);
     const userId: number = decoded.userId;
-    
+
     const user: User | null = await User.findById(userId);
-  
+
     if (!user) {
       return null;
     }
-    
+
     const authority: string[] = user.authority.split(',');
-  
-    if(authority.includes('admin')) {
+
+    if (authority.includes('admin')) {
       return {
         userId,
+        authority,
         authorizations: ['/'],
-        authority,
-      }
-    } else {
-      return {
-        userId,
-        authorizations: [
-          '/Movies',
-          '/torrents',
-          '/TV_Programs',
-          '/Musics',
-        ],
-        authority,
-      }
+      };
     }
+
+    return {
+      userId,
+      authority,
+      authorizations: [
+        '/Movies',
+        '/torrents',
+        '/TV_Programs',
+        '/Musics',
+      ],
+    };
   } catch (err) {
     return null;
   }
 }
 
 router.get('/', (req: Request, res: Response, next: NextFunction) => {
-  (async function() {
+  (async function () {
     let token = '';
-  
+
     if (req.cookies['x-hyunsub-token']) {
       token = req.cookies['x-hyunsub-token'];
     }
-    
+
     if (req.headers['authorization']) {
       token = req.headers['authorization'].toString().replace('Bearer ', '');
     }
-    
+
     if (!token) {
       res.status(401);
       res.end();
       return;
     }
-    
+
     const result = await validateToken(token);
-    
+
     if (result) {
       res.status(204);
       res.set({

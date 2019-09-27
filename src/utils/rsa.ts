@@ -6,11 +6,11 @@ export interface RSAKeyPair {
 }
 
 export function generateKey(): RSAKeyPair {
-  const key = new NodeRSA({b: 2048});
+  const key = new NodeRSA({ b: 2048 });
   return {
     publicKey: key.exportKey('pkcs8-public'),
     privateKey: key.exportKey('pkcs8-private'),
-  }
+  };
 }
 
 export function decrypt(cipher: string, privateKeyString: string): string {

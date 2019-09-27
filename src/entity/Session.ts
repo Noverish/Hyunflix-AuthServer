@@ -6,7 +6,7 @@ import { User } from '@src/entity';
 export class Session {
   @PrimaryGeneratedColumn()
   sessionId: number;
-  
+
   @OneToOne(type => User)
   @JoinColumn()
   user: User;
@@ -16,7 +16,7 @@ export class Session {
 
   @Column({ length: 1024 })
   userAgent: string;
-  
+
   @Column()
   date: Date;
 
@@ -24,7 +24,7 @@ export class Session {
     return await getConnection()
       .getRepository(Session)
       .createQueryBuilder()
-      .leftJoinAndSelect("Session.user", "user")
+      .leftJoinAndSelect('Session.user', 'user')
       .where('Session.user = :userId', { userId: user.userId })
       .getOne();
   }
@@ -33,11 +33,11 @@ export class Session {
     return await getConnection()
       .getRepository(Session)
       .createQueryBuilder()
-      .leftJoinAndSelect("Session.user", "user")
+      .leftJoinAndSelect('Session.user', 'user')
       .where('token = :token', { token })
       .getOne();
   }
-  
+
   static async deleteByUser(user: User): Promise<void> {
     await getConnection()
       .createQueryBuilder()
@@ -54,7 +54,7 @@ export class Session {
       .into(Session)
       .values({ user, token, userAgent, date: new Date() })
       .execute();
-    
+
     return result.identifiers[0].sessionId;
   }
 }

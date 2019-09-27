@@ -42,15 +42,15 @@ export class User {
       .into(User)
       .values({ username, password, authority: '', date: new Date() })
       .execute();
-    
+
     return result.identifiers[0].userId;
   }
-  
+
   convert(token: string): IUser {
     return {
       token,
       userId: this.userId,
       authority: this.authority.split(','),
-    }
+    };
   }
 }
