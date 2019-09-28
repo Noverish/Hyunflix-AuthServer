@@ -1,11 +1,26 @@
 import { Router, Request, Response, NextFunction } from 'express';
 
 import { Session, User } from '@src/entity';
+import { IUser } from '@src/models';
 import * as jwt from '@src/utils/jwt';
 
 const router: Router = Router();
 
-export async function validateToken(token: string) {
+export async function validateToken(req: Request): Promise<IUser | null> {
+  let token = '';
+
+  if (req.cookies['x-hyunsub-token']) {
+    token = req.cookies['x-hyunsub-token'];
+  }
+
+  if (req.headers['authorization']) {
+    token = req.headers['authorization'].toString().replace('Bearer ', '');
+  }
+
+  if (!token) {
+    return null;
+  }
+
   const session: Session | null = await Session.findByToken(token);
 
   if (!session) {
@@ -22,26 +37,7 @@ export async function validateToken(token: string) {
       return null;
     }
 
-    const authority: string[] = user.authority.split(',');
-
-    if (authority.includes('admin')) {
-      return {
-        userId,
-        authority,
-        authorizations: ['/'],
-      };
-    }
-
-    return {
-      userId,
-      authority,
-      authorizations: [
-        '/Movies',
-        '/torrents',
-        '/TV_Programs',
-        '/Musics',
-      ],
-    };
+    return user.convert(token);
   } catch (err) {
     return null;
   }
@@ -49,30 +45,14 @@ export async function validateToken(token: string) {
 
 router.get('/', (req: Request, res: Response, next: NextFunction) => {
   (async function () {
-    let token = '';
+    const user: IUser | null = await validateToken(req);
 
-    if (req.cookies['x-hyunsub-token']) {
-      token = req.cookies['x-hyunsub-token'];
-    }
-
-    if (req.headers['authorization']) {
-      token = req.headers['authorization'].toString().replace('Bearer ', '');
-    }
-
-    if (!token) {
-      res.status(401);
-      res.end();
-      return;
-    }
-
-    const result = await validateToken(token);
-
-    if (result) {
+    if (user) {
       res.status(204);
       res.set({
-        'x-hyunsub-userId': result.userId,
-        'x-hyunsub-authorizations': result.authorizations,
-        'x-hyunsub-authority': result.authority,
+        'x-hyunsub-userId': user.userId,
+        'x-hyunsub-authorizations': user.allowedPaths, // TODO authorizations 을 다른 이름으로 바꾸기
+        'x-hyunsub-authority': user.authority,
       });
       res.end();
     } else {

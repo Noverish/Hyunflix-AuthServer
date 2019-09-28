@@ -47,10 +47,21 @@ export class User {
   }
 
   convert(token: string): IUser {
+    const authority = this.authority.split(',');
+    const allowedPaths = (authority.includes('admin'))
+     ? ['/']
+     : [
+       '/Movies',
+       '/torrents',
+       '/TV_Programs',
+       '/Musics',
+     ];
+
     return {
       token,
+      authority,
+      allowedPaths,
       userId: this.userId,
-      authority: this.authority.split(','),
     };
   }
 }

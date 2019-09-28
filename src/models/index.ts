@@ -2,6 +2,7 @@ export interface IUser {
   userId: number;
   token: string;
   authority: string[];
+  allowedPaths: string[];
 }
 
 export interface IRegisterCode {

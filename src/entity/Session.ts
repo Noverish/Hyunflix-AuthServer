@@ -9,7 +9,7 @@ export class Session {
 
   @OneToOne(type => User)
   @JoinColumn()
-  user: User;
+  user: User | null;
 
   @Column({ length: 1024 })
   token: string;

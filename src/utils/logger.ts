@@ -1,5 +1,5 @@
 import * as morgan from 'morgan';
-import * as moment from 'moment';
+import { dateToString } from '@src/utils';
 
 morgan.token('remote-addr', (req, res) => {
   const ip = req.ip || req._remoteAddress || (req.connection && req.connection.remoteAddress) || undefined;
@@ -11,7 +11,7 @@ morgan.token('remote-addr', (req, res) => {
 });
 
 morgan.token('date', (req, res) => {
-  return moment().format('YYYY-MM-DD HH:mm:ss');
+  return dateToString(new Date());
 });
 
 const consoleFormat = '[:date] :remote-addr - :method :status :response-time ms ":url"';

@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, getConnec
 
 import { User } from '@src/entity';
 import { IRegisterCode } from '@src/models';
-import { dateToString } from '@src/utils/date';
+import { dateToString } from '@src/utils';
 
 @Entity()
 export class RegisterCode {
@@ -11,7 +11,7 @@ export class RegisterCode {
 
   @OneToOne(type => User)
   @JoinColumn()
-  user: User;
+  user: User | null;
 
   @Column()
   realname: string;
@@ -71,7 +71,7 @@ export class RegisterCode {
   convert(): IRegisterCode {
     return {
       codeId: this.codeId,
-      user: this.user.convert(''), // TODO 여기에 빈 문자열을 넣는게 최선인가?
+      user: (this.user) ? this.user.convert('') : null,
       realname: this.realname,
       code: this.code,
       date: dateToString(this.date),

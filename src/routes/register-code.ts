@@ -1,23 +1,15 @@
 import { Router, Request, Response, NextFunction } from 'express';
 
 import { RegisterCode } from '@src/entity';
-import { validateToken } from './validate-token';
-import { dateToString } from '@src/utils/date';
+import { checkAdmin } from '@src/middlewares/check-admin';
 
 const router: Router = Router();
 
-router.post('/', (req: Request, res: Response, next: NextFunction) => {
+router.post('/', checkAdmin, (req: Request, res: Response, next: NextFunction) => {
   const code = req.body['code'];
   const realname = req.body['realname'];
 
   (async function () {
-    const token = req.headers['authorization'].toString().replace('Bearer ', '');
-    const result = await validateToken(token);
-    if (!result || result.userId !== 1) {
-      res.status(401);
-      res.end();
-    }
-
     const regCode: RegisterCode | null = await RegisterCode.findByCode(code);
 
     if (regCode) {
@@ -34,15 +26,8 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
   })().catch(err => next(err));
 });
 
-router.get('/', (req: Request, res: Response, next: NextFunction) => {
+router.get('/', checkAdmin, (req: Request, res: Response, next: NextFunction) => {
   (async function () {
-    const token = req.headers['authorization'].toString().replace('Bearer ', '');
-    const result = await validateToken(token);
-    if (!result || result.userId !== 1) {
-      res.status(401);
-      res.end();
-    }
-
     const regCodes: RegisterCode[] = await RegisterCode.findAll();
 
     res.status(200);
