@@ -19,3 +19,5 @@ function leadingZeros(num: number, digits: number) {
   }
   return zero + n;
 }
+
+export * from './nslookup';

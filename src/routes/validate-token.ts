@@ -3,10 +3,23 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { Session, User } from '@src/entity';
 import { IUser } from '@src/models';
 import * as jwt from '@src/utils/jwt';
+import { backendIP, ffmpegIP } from '@src/app';
 
 const router: Router = Router();
 
 export async function validateToken(req: Request): Promise<IUser | null> {
+  const remoteIP: string = req.connection.remoteAddress || '';
+  const forwardedIP: string = (req.headers['x-forwarded-for'] || '').toString();
+  
+  if (remoteIP.includes(backendIP) && forwardedIP.includes(ffmpegIP)) {
+    return {
+      userId: 0,
+      token: '',
+      authority: ['ffmpeg'],
+      allowedPaths: [],
+    } 
+  }
+  
   let token = '';
 
   if (req.cookies['x-hyunsub-token']) {
