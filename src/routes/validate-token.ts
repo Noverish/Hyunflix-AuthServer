@@ -4,18 +4,28 @@ import { Session, User } from '@src/entity';
 import { IUser } from '@src/models';
 import * as jwt from '@src/utils/jwt';
 import { backendIP, ffmpegIP } from '@src/app';
+import { ipv6to4 } from '@src/utils';
 
 const router: Router = Router();
 
 export async function validateToken(req: Request): Promise<IUser | null> {
-  const remoteIP: string = req.connection.remoteAddress || '';
-  const forwardedIP: string = (req.headers['x-forwarded-for'] || '').toString();
+  const remoteIP: string = ipv6to4(req.connection.remoteAddress || '');
+  const forwardedIP: string = ipv6to4((req.headers['x-forwarded-for'] || '').toString());
   
-  if (remoteIP.includes(backendIP) && forwardedIP.includes(ffmpegIP)) {
+  if (remoteIP === backendIP && forwardedIP === ffmpegIP) {
     return {
       userId: 0,
       token: '',
       authority: ['ffmpeg'],
+      allowedPaths: [],
+    } 
+  }
+  
+  if (remoteIP === ffmpegIP && forwardedIP === backendIP) {
+    return {
+      userId: 0,
+      token: '',
+      authority: ['backend'],
       allowedPaths: [],
     } 
   }
