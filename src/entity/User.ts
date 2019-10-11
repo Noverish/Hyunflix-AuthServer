@@ -5,7 +5,7 @@ import { IUser } from '@src/models';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  userId: number;
+  id: number;
 
   @Column()
   username: string;
@@ -27,11 +27,11 @@ export class User {
       .getOne();
   }
 
-  static async findById(userId: number): Promise<User | null> {
+  static async findById(id: number): Promise<User | null> {
     return await getConnection()
       .getRepository(User)
       .createQueryBuilder()
-      .where('userId = :userId', { userId })
+      .where('id = :id', { id })
       .getOne();
   }
 
@@ -43,7 +43,7 @@ export class User {
       .values({ username, password, authority: '', date: new Date() })
       .execute();
 
-    return result.identifiers[0].userId;
+    return result.identifiers[0].id;
   }
 
   convert(token: string): IUser {
@@ -61,7 +61,7 @@ export class User {
       token,
       authority,
       allowedPaths,
-      userId: this.userId,
+      id: this.id,
     };
   }
 }

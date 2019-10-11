@@ -18,8 +18,8 @@ router.post('/', checkAdmin, (req: Request, res: Response, next: NextFunction) =
       return;
     }
 
-    const codeId: number = await RegisterCode.insert(code, realname);
-    const inserted: RegisterCode = await RegisterCode.findById(codeId);
+    const id: number = await RegisterCode.insert(code, realname);
+    const inserted: RegisterCode = await RegisterCode.findById(id);
 
     res.status(200);
     res.json(inserted.convert());

@@ -1,12 +1,12 @@
 export interface IUser {
-  userId: number;
+  id: number;
   token: string;
   authority: string[];
   allowedPaths: string[];
 }
 
 export interface IRegisterCode {
-  codeId: number;
+  id: number;
   user: IUser;
   realname: string;
   code: string;

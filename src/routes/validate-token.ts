@@ -14,7 +14,7 @@ export async function validateToken(req: Request): Promise<IUser | null> {
   
   if (remoteIP === backendIP && forwardedIP === ffmpegIP) {
     return {
-      userId: 0,
+      id: 0,
       token: '',
       authority: ['ffmpeg'],
       allowedPaths: [],
@@ -23,7 +23,7 @@ export async function validateToken(req: Request): Promise<IUser | null> {
   
   if (remoteIP === ffmpegIP && forwardedIP === backendIP) {
     return {
-      userId: 0,
+      id: 0,
       token: '',
       authority: ['backend'],
       allowedPaths: [],
@@ -73,7 +73,7 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
     if (user) {
       res.status(204);
       res.set({
-        'x-hyunsub-userId': user.userId,
+        'x-hyunsub-userId': user.id,
         'x-hyunsub-authorizations': user.allowedPaths, // TODO authorizations 을 다른 이름으로 바꾸기
         'x-hyunsub-authority': user.authority,
       });

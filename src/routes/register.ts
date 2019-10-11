@@ -42,9 +42,9 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
     const hash: string = await bcrypt.hash(password, 10);
     const userId: number = await User.insert(username, hash);
     const user: User = await User.findById(userId);
-    await RegisterCode.updateUser(regCode.codeId, user);
+    await RegisterCode.updateUser(regCode.id, user);
 
-    const token: string = jwt.create({ userId: user.userId });
+    const token: string = jwt.create({ userId: user.id });
     await Session.deleteByUser(user);
     await Session.insert(user, token, userAgent);
 

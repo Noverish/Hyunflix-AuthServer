@@ -7,7 +7,7 @@ import { dateToString } from '@src/utils';
 @Entity()
 export class RegisterCode {
   @PrimaryGeneratedColumn()
-  codeId: number;
+  id: number;
 
   @OneToOne(type => User)
   @JoinColumn()
@@ -30,12 +30,12 @@ export class RegisterCode {
       .getMany();
   }
 
-  static async findById(codeId: number): Promise<RegisterCode | null> {
+  static async findById(id: number): Promise<RegisterCode | null> {
     return await getConnection()
       .getRepository(RegisterCode)
       .createQueryBuilder()
       .leftJoinAndSelect('RegisterCode.user', 'user')
-      .where('codeId = :codeId', { codeId })
+      .where('id = :id', { id })
       .getOne();
   }
 
@@ -56,21 +56,21 @@ export class RegisterCode {
       .values({ code, realname, date: new Date() })
       .execute();
 
-    return result.identifiers[0].codeId;
+    return result.identifiers[0].id;
   }
 
-  static async updateUser(codeId: number, user: User): Promise<void> {
+  static async updateUser(id: number, user: User): Promise<void> {
     await getConnection()
       .createQueryBuilder()
       .update(RegisterCode)
       .set({ user })
-      .where('codeId = :codeId', { codeId })
+      .where('id = :id', { id })
       .execute();
   }
 
   convert(): IRegisterCode {
     return {
-      codeId: this.codeId,
+      id: this.id,
       user: (this.user) ? this.user.convert('') : null,
       realname: this.realname,
       code: this.code,
