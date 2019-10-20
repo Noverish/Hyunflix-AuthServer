@@ -43,7 +43,7 @@ export class Session {
       .createQueryBuilder()
       .delete()
       .from(Session)
-      .where('id = :id', { id: user.id })
+      .where('userId = :userId', { userId: user.id })
       .execute();
   }
 

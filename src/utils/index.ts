@@ -19,14 +19,3 @@ function leadingZeros(num: number, digits: number) {
   }
   return zero + n;
 }
-
-export * from './nslookup';
-
-export function ipv6to4(ip: string) {
-  const tmp = ip.split(':');
-  
-  if (tmp.length === 4) {
-    return tmp[3];
-  }
-  return ip;
-}
