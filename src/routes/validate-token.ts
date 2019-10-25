@@ -50,7 +50,7 @@ export async function validateToken(req: Request): Promise<IUser | null> {
     const decoded = jwt.verify(token);
     const userId: number = decoded.userId;
 
-    const user: User | null = await User.findById(userId);
+    const user: User | null = await User.findOne(userId);
 
     if (!user) {
       return null;

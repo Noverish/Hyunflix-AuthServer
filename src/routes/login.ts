@@ -17,7 +17,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
     const username = rsa.decrypt(usernameCipher, rsaKeyPair.privateKey);
     const password = rsa.decrypt(passwordCipher, rsaKeyPair.privateKey);
 
-    const user: User | null = await User.findByUsername(username);
+    const user: User | null = await User.findOne({ username });
 
     if (!user) {
       res.status(400);

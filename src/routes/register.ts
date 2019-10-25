@@ -1,4 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import { InsertResult } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 
 import { User, RegisterCode, Session } from '@src/entity';
@@ -33,15 +34,17 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
       return;
     }
 
-    if (await User.findByUsername(username)) {
+    if (await User.findOne({ username })) {
       res.status(400);
       res.json({ msg: '이미 존재하는 아이디입니다' });
       return;
     }
 
     const hash: string = await bcrypt.hash(password, 10);
-    const userId: number = await User.insert(username, hash);
-    const user: User = await User.findById(userId);
+    const result: InsertResult = await User.insert({ username, password: hash });
+    const userId: number = result.identifiers[0].id;
+    
+    const user: User = await User.findOne(userId);
     await RegisterCode.updateUser(regCode.id, user);
 
     const token: string = jwt.create({ userId: user.id });
