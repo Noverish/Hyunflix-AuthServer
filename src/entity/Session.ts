@@ -1,9 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, getConnection } from 'typeorm';
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
 
 import { User } from '@src/entity';
 
 @Entity()
-export class Session {
+export class Session extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -17,44 +17,6 @@ export class Session {
   @Column({ length: 1024 })
   userAgent: string;
 
-  @Column()
+  @Column({ default: () => 'CURRENT_TIMESTAMP' })
   date: Date;
-
-  static async findByUser(user: User): Promise<Session | null> {
-    return await getConnection()
-      .getRepository(Session)
-      .createQueryBuilder()
-      .leftJoinAndSelect('Session.user', 'user')
-      .where('Session.user = :userId', { userId: user.id })
-      .getOne();
-  }
-
-  static async findByToken(token: string): Promise<Session | null> {
-    return await getConnection()
-      .getRepository(Session)
-      .createQueryBuilder()
-      .leftJoinAndSelect('Session.user', 'user')
-      .where('token = :token', { token })
-      .getOne();
-  }
-
-  static async deleteByUser(user: User): Promise<void> {
-    await getConnection()
-      .createQueryBuilder()
-      .delete()
-      .from(Session)
-      .where('userId = :userId', { userId: user.id })
-      .execute();
-  }
-
-  static async insert(user: User, token: string, userAgent: string): Promise<number> {
-    const result = await getConnection()
-      .createQueryBuilder()
-      .insert()
-      .into(Session)
-      .values({ user, token, userAgent, date: new Date() })
-      .execute();
-
-    return result.identifiers[0].id;
-  }
 }

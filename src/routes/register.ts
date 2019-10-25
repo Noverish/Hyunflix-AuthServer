@@ -48,8 +48,8 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
     await RegisterCode.updateUser(regCode.id, user);
 
     const token: string = jwt.create({ userId: user.id });
-    await Session.deleteByUser(user);
-    await Session.insert(user, token, userAgent);
+    await Session.delete({ user });
+    await Session.insert({ user, token, userAgent });
 
     res.json(user.convert(token));
   })().catch(err => next(err));

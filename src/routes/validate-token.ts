@@ -40,7 +40,7 @@ export async function validateToken(req: Request): Promise<IUser | null> {
     }
   }
 
-  const session: Session | null = await Session.findByToken(token);
+  const session: Session | null = await Session.findOne({ token });
 
   if (!session) {
     return null;
