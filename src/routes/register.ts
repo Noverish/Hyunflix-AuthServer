@@ -20,7 +20,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
   const regCodeStr = rsa.decrypt(regCodeCipher, rsaKeyPair.privateKey);
 
   (async function () {
-    const regCode: RegisterCode | null = await RegisterCode.findByCode(regCodeStr);
+    const regCode: RegisterCode | null = await RegisterCode.$findOne({ code: regCodeStr });
 
     if (!regCode) {
       res.status(400);
@@ -45,7 +45,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
     const userId: number = result.identifiers[0].id;
     
     const user: User = await User.findOne(userId);
-    await RegisterCode.updateUser(regCode.id, user);
+    await RegisterCode.update(regCode.id, { user });
 
     const token: string = jwt.create({ userId: user.id });
     await Session.delete({ user });

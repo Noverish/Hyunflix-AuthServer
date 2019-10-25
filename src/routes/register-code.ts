@@ -1,4 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import { InsertResult } from 'typeorm';
 
 import { RegisterCode } from '@src/entity';
 import { checkAdmin } from '@src/middlewares/check-admin';
@@ -10,7 +11,7 @@ router.post('/', checkAdmin, (req: Request, res: Response, next: NextFunction) =
   const realname = req.body['realname'];
 
   (async function () {
-    const regCode: RegisterCode | null = await RegisterCode.findByCode(code);
+    const regCode: RegisterCode | null = await RegisterCode.$findOne({ code });
 
     if (regCode) {
       res.status(409);
@@ -18,8 +19,9 @@ router.post('/', checkAdmin, (req: Request, res: Response, next: NextFunction) =
       return;
     }
 
-    const id: number = await RegisterCode.insert(code, realname);
-    const inserted: RegisterCode = await RegisterCode.findById(id);
+    const result: InsertResult = await RegisterCode.insert(code, realname);
+    const id = result.identifiers[0].id;
+    const inserted: RegisterCode = await RegisterCode.$findOne({ id });
 
     res.status(200);
     res.json(inserted.convert());
@@ -28,7 +30,7 @@ router.post('/', checkAdmin, (req: Request, res: Response, next: NextFunction) =
 
 router.get('/', checkAdmin, (req: Request, res: Response, next: NextFunction) => {
   (async function () {
-    const regCodes: RegisterCode[] = await RegisterCode.findAll();
+    const regCodes: RegisterCode[] = await RegisterCode.$find();
 
     res.status(200);
     res.json(regCodes.map(c => c.convert()));

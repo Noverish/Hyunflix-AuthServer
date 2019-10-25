@@ -1,11 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, getConnection } from 'typeorm';
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, getConnection, FindConditions } from 'typeorm';
 
 import { User } from '@src/entity';
 import { IRegisterCode } from '@src/models';
 import { dateToString } from '@src/utils';
 
 @Entity()
-export class RegisterCode {
+export class RegisterCode extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -19,53 +19,27 @@ export class RegisterCode {
   @Column()
   code: string;
 
-  @Column()
+  @Column({ default: () => 'CURRENT_TIMESTAMP' })
   date: Date;
 
-  static async findAll(): Promise<RegisterCode[]> {
+  static async $findOne(where?: FindConditions<RegisterCode>): Promise<RegisterCode | null> {
+    RegisterCode.findOne();
+    
     return await getConnection()
       .getRepository(RegisterCode)
-      .createQueryBuilder()
-      .leftJoinAndSelect('RegisterCode.user', 'user')
-      .getMany();
+      .findOne({
+        where,
+        relations: ['user'],
+      });
   }
 
-  static async findById(id: number): Promise<RegisterCode | null> {
+  static async $find(where?: FindConditions<RegisterCode>): Promise<RegisterCode[]> {
     return await getConnection()
       .getRepository(RegisterCode)
-      .createQueryBuilder()
-      .leftJoinAndSelect('RegisterCode.user', 'user')
-      .where('id = :id', { id })
-      .getOne();
-  }
-
-  static async findByCode(code: string): Promise<RegisterCode | null> {
-    return await getConnection()
-      .getRepository(RegisterCode)
-      .createQueryBuilder()
-      .leftJoinAndSelect('RegisterCode.user', 'user')
-      .where('code = :code', { code })
-      .getOne();
-  }
-
-  static async insert(code: string, realname: string): Promise<number> {
-    const result =  await getConnection()
-      .createQueryBuilder()
-      .insert()
-      .into(RegisterCode)
-      .values({ code, realname, date: new Date() })
-      .execute();
-
-    return result.identifiers[0].id;
-  }
-
-  static async updateUser(id: number, user: User): Promise<void> {
-    await getConnection()
-      .createQueryBuilder()
-      .update(RegisterCode)
-      .set({ user })
-      .where('id = :id', { id })
-      .execute();
+      .find({
+        where,
+        relations: ['user'],
+      });
   }
 
   convert(): IRegisterCode {
