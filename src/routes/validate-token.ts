@@ -2,7 +2,6 @@ import { Router, Request, Response, NextFunction } from 'express';
 
 import { Session, User } from '@src/entity';
 import { IUser } from '@src/models';
-import { API_SERVER_KEY, FFMPEG_SERVER_KEY } from '@src/credentials';
 import * as jwt from '@src/utils/jwt';
 
 const router: Router = Router();
@@ -20,24 +19,6 @@ export async function validateToken(req: Request): Promise<IUser | null> {
 
   if (!token) {
     return null;
-  }
-  
-  if (token === API_SERVER_KEY) {
-    return {
-      id: -1,
-      token: API_SERVER_KEY,
-      authority: ['api'],
-      allowedPaths: ['/Movies', '/TV_Programs', '/Musics'],
-    }
-  }
-  
-  if (token === FFMPEG_SERVER_KEY) {
-    return {
-      id: -1,
-      token: API_SERVER_KEY,
-      authority: ['fs'],
-      allowedPaths: ['/Movies', '/TV_Programs', '/Musics'],
-    }
   }
 
   const session: Session | null = await Session.findOne({ token });

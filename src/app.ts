@@ -6,7 +6,7 @@ import { createConnection } from 'typeorm';
 import { PORT } from '@src/config';
 import routes from '@src/routes';
 import * as rsa from '@src/utils/rsa';
-import { consoleLogger } from '@src/utils/logger';
+import { consoleLogger } from '@src/middlewares/logger';
 
 const app = express();
 
@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500);
-  res.json(err);
+  res.json({ msg: err.stack });
 });
 
 app.listen(PORT, () => {

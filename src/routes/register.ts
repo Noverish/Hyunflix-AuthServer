@@ -43,7 +43,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
     const hash: string = await bcrypt.hash(password, 10);
     const result: InsertResult = await User.insert({ username, password: hash });
     const userId: number = result.identifiers[0].id;
-    
+
     const user: User = await User.findOne(userId);
     await RegisterCode.update(regCode.id, { user });
 

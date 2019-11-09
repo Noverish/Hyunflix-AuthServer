@@ -24,7 +24,7 @@ export class RegisterCode extends BaseEntity {
 
   static async $findOne(where?: FindConditions<RegisterCode>): Promise<RegisterCode | null> {
     RegisterCode.findOne();
-    
+
     return await getConnection()
       .getRepository(RegisterCode)
       .findOne({

@@ -26,7 +26,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
     }
 
     const user: User = await User.findOne(iUser.id);
-    
+
     if (!(await bcrypt.compare(oldPassword, user.password))) {
       res.status(400);
       res.json({ msg: '비밀번호가 틀렸습니다' });
@@ -35,7 +35,7 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
 
     const hash: string = await bcrypt.hash(newPassword, 10);
     await User.update(iUser.id, { password: hash });
-    
+
     res.status(204);
     res.end();
   })().catch(err => next(err));
