@@ -1,0 +1,17 @@
+name: Main
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+    - run: npm install
+    - run: npm run tslint
+    - run: npm run check
