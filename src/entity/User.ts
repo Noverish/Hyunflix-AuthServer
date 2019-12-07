@@ -35,6 +35,7 @@ export class User extends BaseEntity {
       authority,
       allowedPaths,
       id: this.id,
+      username: this.username,
     };
   }
 }
