@@ -1,16 +1,16 @@
 import * as express from 'express';
 import * as cookieParser from 'cookie-parser';
-import * as cors from 'cors';
 import { createConnection } from 'typeorm';
 
 import { PORT } from '@src/config';
 import routes from '@src/routes';
 import * as rsa from '@src/utils/rsa';
 import { consoleLogger } from '@src/middlewares/logger';
+import cors from '@src/middlewares/cors';
 
 const app = express();
 
-app.use(cors());
+app.use(cors);
 app.use(express.json());
 app.use(cookieParser());
 

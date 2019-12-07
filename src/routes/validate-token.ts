@@ -16,7 +16,7 @@ export async function validateToken(req: Request): Promise<IUser | null> {
   if (req.headers['authorization']) {
     token = req.headers['authorization'].toString().replace('Bearer ', '');
   }
-  
+
   if (req.query['token']) {
     token = req.query['token'];
   }
