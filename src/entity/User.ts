@@ -25,7 +25,7 @@ export class User extends BaseEntity {
      ? ['/']
      : [
        '/Movies',
-       '/torrents',
+       '/Comics',
        '/TV_Programs',
        '/Musics',
      ];
