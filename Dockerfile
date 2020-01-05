@@ -11,6 +11,4 @@ COPY ormconfig.js  /app
 COPY package.json  /app
 COPY tsconfig.json /app
 
-ENV PORT 80
-
-CMD ["npm", "run", "dev"]
+ENTRYPOINT npm start

@@ -44,7 +44,7 @@ router.post('/get-user', (req: Request, res: Response, next: NextFunction) => {
     }).catch(next);
 });
 
-router.use('/validate-session', (req: Request, res: Response, next: NextFunction) => {
+router.get('/validate-session', (req: Request, res: Response, next: NextFunction) => {
   res.status(204);
   res.set('x-hyunsub-session', JSON.stringify(req['session']));
   res.end();
