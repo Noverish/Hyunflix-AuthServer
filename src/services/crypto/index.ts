@@ -1,17 +1,8 @@
 import * as NodeRSA from 'node-rsa';
 
-export interface RSAKeyPair {
-  publicKey: string;
-  privateKey: string;
-}
-
-export function generateKey(): RSAKeyPair {
-  const key = new NodeRSA({ b: 2048 });
-  return {
-    publicKey: key.exportKey('pkcs8-public'),
-    privateKey: key.exportKey('pkcs8-private'),
-  };
-}
+const key = new NodeRSA({ b: 2048 });
+export const publicKey = key.exportKey('pkcs8-public');
+export const privateKey = key.exportKey('pkcs8-private');
 
 export function decrypt(cipher: string, privateKeyString: string): string {
   const privateKey = new NodeRSA(privateKeyString, 'pkcs8-private');

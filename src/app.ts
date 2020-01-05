@@ -4,8 +4,7 @@ import { createConnection } from 'typeorm';
 
 import { PORT } from '@src/config';
 import routes from '@src/routes';
-import * as rsa from '@src/utils/rsa';
-import { consoleLogger } from '@src/middlewares/logger';
+import { logger } from '@src/middlewares';
 import cors from '@src/middlewares/cors';
 
 const app = express();
@@ -14,7 +13,7 @@ app.use(cors);
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(consoleLogger);
+app.use(logger);
 
 app.use('/', routes);
 
@@ -33,5 +32,4 @@ app.listen(PORT, () => {
   console.log(`* Auth Server Started at ${PORT}`);
 });
 
-export const rsaKeyPair: rsa.RSAKeyPair = rsa.generateKey();
 createConnection();

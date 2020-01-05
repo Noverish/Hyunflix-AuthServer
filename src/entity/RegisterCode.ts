@@ -45,7 +45,7 @@ export class RegisterCode extends BaseEntity {
   convert(): IRegisterCode {
     return {
       id: this.id,
-      user: (this.user) ? this.user.convert('') : null,
+      user: (this.user) ? this.user.convert() : null,
       realname: this.realname,
       code: this.code,
       date: dateToString(this.date),

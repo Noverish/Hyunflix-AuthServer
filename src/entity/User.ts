@@ -1,6 +1,7 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-import { IUser } from '@src/models';
+import { UserDTO } from '@src/models';
+import { dateToString } from '@src/utils';
 
 @Entity()
 export class User extends BaseEntity {
@@ -13,29 +14,16 @@ export class User extends BaseEntity {
   @Column()
   password: string;
 
-  @Column({ default: '' })
-  authority: string;
+  @Column({ default: 0 })
+  authority: number;
 
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
   date: Date;
 
-  convert(token: string): IUser {
-    const authority = this.authority.split(',');
-    const allowedPaths = (authority.includes('admin'))
-     ? ['/']
-     : [
-       '/Movies',
-       '/Comics',
-       '/TV_Programs',
-       '/Musics',
-     ];
-
+  convert(): UserDTO {
     return {
-      token,
-      authority,
-      allowedPaths,
-      id: this.id,
       username: this.username,
+      date: dateToString(this.date),
     };
   }
 }

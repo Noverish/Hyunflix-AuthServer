@@ -1,22 +1,31 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, BaseEntity, PrimaryColumn, Column } from 'typeorm';
 
-import { User } from '@src/entity';
+import { SessionDTO } from '@src/models';
+import { SESSION_ID_LENGTH } from '@src/config';
 
 @Entity()
 export class Session extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn('char', { length: SESSION_ID_LENGTH })
+  id: string;
 
-  @OneToOne(type => User)
-  @JoinColumn()
-  user: User | null;
+  @Column()
+  userId: number;
 
-  @Column({ length: 1024 })
-  token: string;
+  @Column()
+  authority: number;
 
-  @Column({ length: 1024 })
-  userAgent: string;
+  @Column()
+  allowedPaths: string;
 
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
   date: Date;
+
+  convert(): SessionDTO {
+    return {
+      id: this.id,
+      userId: this.userId,
+      authority: this.authority,
+      allowedPaths: this.allowedPaths.split(','),
+    };
+  }
 }

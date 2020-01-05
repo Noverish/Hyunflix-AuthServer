@@ -1,19 +1,23 @@
-export interface IUser {
-  id: number;
+export interface UserDTO {
   username: string;
-  token: string;
-  authority: string[];
-  allowedPaths: string[];
+  date: string;
 }
 
 export interface IRegisterCode {
   id: number;
-  user: IUser;
+  user: UserDTO;
   realname: string;
   code: string;
   date: string;
 }
 
-export interface ISession {
+export interface UserDTO {
+  username: string;
+}
 
+export interface SessionDTO {
+  id: string;
+  userId: number;
+  authority: number;
+  allowedPaths: string[];
 }
