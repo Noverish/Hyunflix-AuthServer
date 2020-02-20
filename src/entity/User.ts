@@ -14,7 +14,7 @@ export class User extends BaseEntity {
   @Column()
   password: string;
 
-  @Column({ default: 0 })
+  @Column({ default: 1 })
   authority: number;
 
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
