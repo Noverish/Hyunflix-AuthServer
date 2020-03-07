@@ -1,8 +1,9 @@
 import * as Joi from '@hapi/joi';
 import * as bcrypt from 'bcryptjs';
 
-import { User } from '@src/entity';
-import { ServiceResult, SessionService, CryptoService } from '@src/services';
+import { User, RefreshToken } from '@src/entity';
+import { ServiceResult, TokenService, CryptoService } from '@src/services';
+import { AccessTokenPayload } from '@src/models';
 
 interface Schema {
   username: string;
@@ -35,7 +36,11 @@ export default async function (args: object): Promise<ServiceResult> {
     return [400, { msg: '비밀번호가 틀렸습니다' }];
   }
 
-  const session = await SessionService.createSession(user);
+  const accessTokenPayload: AccessTokenPayload = await TokenService.getAccessTokenPayload(user);
+  const accessToken = await TokenService.issueAccessToken(accessTokenPayload);
+  const refreshToken = await TokenService.issueRefreshToken({ userId: user.id });
 
-  return [200, { sessionId: session.id, username: user.username }];
+  await RefreshToken.update(user.id, { token: refreshToken });
+
+  return [200, { accessToken, refreshToken }];
 }

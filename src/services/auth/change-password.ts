@@ -3,7 +3,7 @@ import * as bcrypt from 'bcryptjs';
 
 import { User } from '@src/entity';
 import { ServiceResult, CryptoService } from '@src/services';
-import { SessionDTO } from '@src/models';
+import { RefreshTokenPayload } from '@src/models';
 
 interface Schema {
   oldPassword: string;
@@ -15,7 +15,7 @@ const schema = Joi.object({
   newPassword: Joi.string().required(),
 });
 
-export default async function (session: SessionDTO, args: object): Promise<ServiceResult> {
+export default async function (payload: RefreshTokenPayload, args: object): Promise<ServiceResult> {
   const { value, error } = schema.validate(args);
   if (error) {
     return [400, { msg: error.message }];
@@ -26,7 +26,7 @@ export default async function (session: SessionDTO, args: object): Promise<Servi
   const oldPassword = CryptoService.decrypt(oldPasswordCipher, CryptoService.privateKey);
   const newPassword = CryptoService.decrypt(newPasswordCipher, CryptoService.privateKey);
 
-  const user: User | null = await User.findOne({ id: session.userId });
+  const user: User | null = await User.findOne({ id: payload.userId });
 
   if (!user) {
     return [400, { msg: '해당 유저가 존재하지 않습니다' }];
@@ -37,7 +37,7 @@ export default async function (session: SessionDTO, args: object): Promise<Servi
   }
 
   const hash: string = await bcrypt.hash(newPassword, 10);
-  await User.update(session.id, { password: hash });
+  await User.update(payload.userId, { password: hash });
 
   return [204, {}];
 }

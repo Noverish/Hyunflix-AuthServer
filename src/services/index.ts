@@ -1,14 +1,12 @@
-import * as SessionService from './session';
 import * as AuthService from './auth';
 import * as CryptoService from './crypto';
-import * as UserService from './user';
+import * as TokenService from './token';
 
 type ServiceResult = [number, object];
 
 export {
   ServiceResult,
-  SessionService,
   AuthService,
   CryptoService,
-  UserService,
+  TokenService,
 };

@@ -2,8 +2,9 @@ import * as Joi from '@hapi/joi';
 import * as bcrypt from 'bcryptjs';
 import { InsertResult } from 'typeorm';
 
-import { User, RegisterCode } from '@src/entity';
-import { ServiceResult, SessionService, CryptoService } from '@src/services';
+import { User, RegisterCode, RefreshToken } from '@src/entity';
+import { ServiceResult, TokenService, CryptoService } from '@src/services';
+import { AccessTokenPayload } from '@src/models';
 
 interface Schema {
   regCode: string;
@@ -53,7 +54,11 @@ export default async function (args: object): Promise<ServiceResult> {
   const user: User = await User.findOne(userId);
   await RegisterCode.update(registerCode.id, { user });
 
-  const session = await SessionService.createSession(user);
+  const accessTokenPayload: AccessTokenPayload = await TokenService.getAccessTokenPayload(user);
+  const accessToken = await TokenService.issueAccessToken(accessTokenPayload);
+  const refreshToken = await TokenService.issueRefreshToken({ userId: user.id });
 
-  return [200, { sessionId: session.id, username: user.username }];
+  await RefreshToken.insert({ userId: user.id, token: refreshToken });
+
+  return [200, { accessToken, refreshToken }];
 }
