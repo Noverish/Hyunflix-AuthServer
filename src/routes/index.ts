@@ -42,7 +42,7 @@ router.post('/change-password', verifyRefreshToken, (req: Request, res: Response
 });
 
 router.post('/reissue-access-token', verifyRefreshToken, (req: Request, res: Response, next: NextFunction) => {
-  AuthService.reissueAccessToken(req[REFRESH_TOKEN_PAYLOAD_FILED] as RefreshTokenPayload, req.get(ACCESS_TOKEN_HEADER))
+  AuthService.reissueAccessToken(req[REFRESH_TOKEN_PAYLOAD_FILED] as RefreshTokenPayload, req.body[ACCESS_TOKEN_HEADER])
     .then(([status, payload]) => {
       res.status(status);
       res.json(payload);

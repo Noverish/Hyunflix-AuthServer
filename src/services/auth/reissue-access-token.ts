@@ -15,5 +15,5 @@ export default async function (payload: RefreshTokenPayload, accessToken: string
   const accessTokenPayload: AccessTokenPayload = await TokenService.getAccessTokenPayload(user);
   const newAccessToken = await TokenService.issueAccessToken(accessTokenPayload);
 
-  return [204, { accessToken: newAccessToken }];
+  return [200, { accessToken: newAccessToken }];
 }
