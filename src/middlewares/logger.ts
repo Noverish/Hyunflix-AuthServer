@@ -1,20 +1,27 @@
+import { Request, Response } from 'express';
 import * as morgan from 'morgan';
 
 import { dateToString } from '@src/utils';
-import { REFRESH_TOKEN_PAYLOAD_FILED } from '@src/config';
+import { REFRESH_TOKEN_PAYLOAD_FILED, REAL_IP_HEADER } from '@src/config';
 
-morgan.token('remote-addr', (req, res) => {
-  return req.headers['x-real-ip'];
+morgan.token('remote-addr', (req: Request, res: Response) => {
+  if (req.get(REAL_IP_HEADER)) {
+    return req.get(REAL_IP_HEADER);
+  }
+
+  return req.ip || req.connection.remoteAddress;
 });
 
-morgan.token('date', (req, res) => {
+morgan.token('date', (req: Request, res: Response) => {
   return dateToString(new Date());
 });
 
-morgan.token('user-id', (req, res) => {
-  return req[REFRESH_TOKEN_PAYLOAD_FILED];
+morgan.token('user-id', (req: Request, res: Response) => {
+  return req[REFRESH_TOKEN_PAYLOAD_FILED]?.userId;
 });
 
-const consoleFormat = '[:date] <:remote-addr> :user-id :method :status :response-time ms ":url"';
+morgan.token('url', (req: Request, res: Response) => {
+  return decodeURI(req.originalUrl);
+});
 
-export default morgan(consoleFormat);
+export default morgan('[:date] <:remote-addr> :user-id :method :status :response-time ms ":url"');

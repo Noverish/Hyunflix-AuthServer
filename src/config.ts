@@ -2,6 +2,7 @@ export const PORT = parseInt(process.env.PORT) || 80;
 export const SESSION_ID_LENGTH = parseInt(process.env.SESSION_ID_LEGNTH || '32');
 export const SESSION_ID_COOKIE_KEY = 'x-hyunsub-session-id';
 
+export const REAL_IP_HEADER = 'X-Real-IP';
 export const ACCESS_TOKEN_EXPIRE = '1h';
 export const REFRESH_TOKEN_EXPIRE = '30d';
 export const TOKEN_ALGORITHM = 'RS256';
