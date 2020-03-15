@@ -40,7 +40,7 @@ export default async function (args: object): Promise<ServiceResult> {
   }
 
   if (registerCode.user) {
-    return[400, { msg: '이미 사용된 회원가입 코드입니다' }];
+    return [400, { msg: '이미 사용된 회원가입 코드입니다' }];
   }
 
   if (await User.findOne({ username })) {

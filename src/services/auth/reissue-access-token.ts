@@ -1,4 +1,4 @@
-import { User, RefreshToken } from '@src/entity';
+import { User } from '@src/entity';
 import { ServiceResult, TokenService } from '@src/services';
 import { RefreshTokenPayload, AccessTokenPayload } from '@src/models';
 

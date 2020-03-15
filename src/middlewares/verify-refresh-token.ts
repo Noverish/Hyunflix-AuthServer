@@ -10,7 +10,6 @@ export default function (req: Request, res: Response, next: NextFunction) {
 
   TokenService.verifyRefreshToken(refreshToken)
     .then((payload: RefreshTokenPayload) => {
-
       RefreshToken.findOne({ userId: payload.userId, token: refreshToken })
         .then((token) => {
           if (token) {
@@ -21,7 +20,6 @@ export default function (req: Request, res: Response, next: NextFunction) {
             res.end({ msg: '로그인이 만료되었습니다' });
           }
         });
-
     })
     .catch((err) => {
       res.status(401);
