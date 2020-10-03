@@ -1,4 +1,6 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import {
+  Router, Request, Response, NextFunction,
+} from 'express';
 
 import { verifyRefreshToken } from '@src/middlewares';
 import { AuthService, CryptoService } from '@src/services';

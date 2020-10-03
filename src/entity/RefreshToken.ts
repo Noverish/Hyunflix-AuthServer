@@ -1,7 +1,9 @@
-import { Entity, BaseEntity, PrimaryColumn, Column } from 'typeorm';
+import {
+  Entity, BaseEntity, PrimaryColumn, Column,
+} from 'typeorm';
 
 @Entity()
-export class RefreshToken extends BaseEntity {
+class RefreshToken extends BaseEntity {
   @PrimaryColumn()
   userId: number;
 
@@ -11,3 +13,5 @@ export class RefreshToken extends BaseEntity {
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
   date: Date;
 }
+
+export default RefreshToken;

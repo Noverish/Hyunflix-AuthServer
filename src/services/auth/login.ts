@@ -15,7 +15,7 @@ const schema = Joi.object({
   password: Joi.string().required(),
 });
 
-export default async function (args: object): Promise<ServiceResult> {
+async function login(args: object): Promise<ServiceResult> {
   const { value, error } = schema.validate(args);
   if (error) {
     return [400, { msg: error.message }];
@@ -44,3 +44,5 @@ export default async function (args: object): Promise<ServiceResult> {
 
   return [200, { accessToken, refreshToken }];
 }
+
+export default login;

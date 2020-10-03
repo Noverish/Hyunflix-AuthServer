@@ -15,7 +15,7 @@ const schema = Joi.object({
   newPassword: Joi.string().required(),
 });
 
-export default async function (payload: RefreshTokenPayload, args: object): Promise<ServiceResult> {
+async function changePassword(payload: RefreshTokenPayload, args: object): Promise<ServiceResult> {
   const { value, error } = schema.validate(args);
   if (error) {
     return [400, { msg: error.message }];
@@ -41,3 +41,5 @@ export default async function (payload: RefreshTokenPayload, args: object): Prom
 
   return [204, {}];
 }
+
+export default changePassword;

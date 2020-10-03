@@ -5,7 +5,7 @@ import { TokenService } from '@src/services';
 import { REFRESH_TOKEN_HEADER, REFRESH_TOKEN_PAYLOAD_FILED } from '@src/config';
 import { RefreshTokenPayload } from '@src/models';
 
-export default function (req: Request, res: Response, next: NextFunction) {
+function verifyRefreshToken(req: Request, res: Response, next: NextFunction) {
   const refreshToken = req.get(REFRESH_TOKEN_HEADER);
 
   TokenService.verifyRefreshToken(refreshToken)
@@ -26,3 +26,5 @@ export default function (req: Request, res: Response, next: NextFunction) {
       res.end({ msg: err.message });
     });
 }
+
+export default verifyRefreshToken;

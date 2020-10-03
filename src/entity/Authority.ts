@@ -1,7 +1,9 @@
-import { Entity, BaseEntity, PrimaryColumn, Column } from 'typeorm';
+import {
+  Entity, BaseEntity, PrimaryColumn, Column,
+} from 'typeorm';
 
 @Entity()
-export class Authority extends BaseEntity {
+class Authority extends BaseEntity {
   @PrimaryColumn()
   id: number;
 
@@ -11,3 +13,5 @@ export class Authority extends BaseEntity {
   @Column()
   paths: string;
 }
+
+export default Authority;

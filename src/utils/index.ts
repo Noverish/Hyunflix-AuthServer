@@ -14,5 +14,5 @@ export function getEnabledIndexOfBinary(num: number): number[] {
     .split('')
     .reverse()
     .map((v, i) => (v === '1' ? i : null))
-    .filter(v => v !== null);
+    .filter((v) => v !== null);
 }

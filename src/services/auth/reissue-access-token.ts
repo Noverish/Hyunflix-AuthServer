@@ -2,7 +2,7 @@ import { User } from '@src/entity';
 import { ServiceResult, TokenService } from '@src/services';
 import { RefreshTokenPayload, AccessTokenPayload } from '@src/models';
 
-export default async function (payload: RefreshTokenPayload, accessToken: string | undefined): Promise<ServiceResult> {
+async function reissueAccessToken(payload: RefreshTokenPayload, accessToken: string | undefined): Promise<ServiceResult> {
   if (!accessToken) {
     return [401, { msg: 'No Access Token' }];
   }
@@ -17,3 +17,5 @@ export default async function (payload: RefreshTokenPayload, accessToken: string
 
   return [200, { accessToken: newAccessToken }];
 }
+
+export default reissueAccessToken;

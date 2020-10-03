@@ -6,7 +6,7 @@ import { REFRESH_TOKEN_EXPIRE, TOKEN_ALGORITHM, REFRESH_PRIVATE_KEY_PATH } from 
 
 const privateKey = fs.readFileSync(REFRESH_PRIVATE_KEY_PATH);
 
-export default function (payload: RefreshTokenPayload): Promise<string> {
+function issueRefreshToken(payload: RefreshTokenPayload): Promise<string> {
   return new Promise((resolve, reject) => {
     jwt.sign(payload, privateKey, { algorithm: TOKEN_ALGORITHM, expiresIn: REFRESH_TOKEN_EXPIRE }, (err, token) => {
       if (err) {
@@ -17,3 +17,5 @@ export default function (payload: RefreshTokenPayload): Promise<string> {
     });
   });
 }
+
+export default issueRefreshToken;
